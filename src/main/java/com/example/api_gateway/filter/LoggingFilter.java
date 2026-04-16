@@ -1,7 +1,4 @@
-Create TraceIdGenerator utility.
-Generate unique trace ID.
-Attach to header:
-X-Trace-Idpackage com.example.api_gateway.filter;
+package com.example.api_gateway.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
