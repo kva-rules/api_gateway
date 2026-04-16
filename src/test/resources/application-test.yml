@@ -1,0 +1,31 @@
+# Test profile configuration
+spring:
+  profiles:
+    active: test
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: classpath:jwks.json
+jwt:
+  secret: testSecretKey12345678901234567890
+  expiration: 3600000
+server:
+  port: 0
+management:
+  endpoint:
+    health:
+      show-details: always
+logging:
+  level:
+    root: WARN
+    com.example.api_gateway: DEBUG
+    reactor.netty: DEBUG
