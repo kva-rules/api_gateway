@@ -22,10 +22,11 @@ public class JwtTokenValidator {
         try {
             SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
             
-            return Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(token)
-                    .getBody();
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
             
             // Check expiry
             if (claims.getExpiration().before(new java.util.Date())) {

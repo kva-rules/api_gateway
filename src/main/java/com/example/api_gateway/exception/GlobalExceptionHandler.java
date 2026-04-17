@@ -45,8 +45,14 @@ public class GlobalExceptionHandler {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         response.setStatusCode(status);
         
-        return response.writeWith(Mono.just(response.bufferFactory().wrap(
-            new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(errorResponse)
-        )));
+        try {
+            return response.writeWith(Mono.just(response.bufferFactory().wrap(
+                new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(errorResponse)
+            )));
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            return response.writeWith(Mono.just(response.bufferFactory().wrap(
+                "{\"error\":\"Internal Server Error\"}".getBytes()
+            )));
+        }
     }
 }
