@@ -25,7 +25,7 @@ public class FilterConfig {
     @Autowired
     private LoggingFilter loggingFilter;
 
-    @Bean
+    // Routes are configured via application.yml; filters are applied as GatewayFilter beans
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-service", r -> r.path("/api/auth/**")

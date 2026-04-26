@@ -1,0 +1,45 @@
+2026-04-21 16:11:48 [main] INFO  c.c.n.NotificationServiceApplication - Starting NotificationServiceApplication v0.0.1-SNAPSHOT using Java 17.0.18 with PID 33526 (/Users/abhidhabmellwyn/Downloads/Services/Notification_service/target/notification-service-0.0.1-SNAPSHOT.jar started by abhidhabmellwyn in /Users/abhidhabmellwyn/Downloads/Services/api_gateway)
+2026-04-21 16:11:48 [main] DEBUG c.c.n.NotificationServiceApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-04-21 16:11:48 [main] INFO  c.c.n.NotificationServiceApplication - The following 1 profile is active: "local"
+2026-04-21 16:11:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-21 16:11:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 24 ms. Found 6 JPA repository interfaces.
+2026-04-21 16:11:49 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8087 (http)
+2026-04-21 16:11:49 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-21 16:11:49 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-04-21 16:11:49 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-21 16:11:49 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 999 ms
+2026-04-21 16:11:49 [main] DEBUG c.c.n.i.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-04-21 16:11:49 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-21 16:11:49 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-04-21 16:11:49 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-04-21 16:11:49 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-21 16:11:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-21 16:11:49 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@27055a2a
+2026-04-21 16:11:49 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-21 16:11:49 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-21 16:11:49 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-21 16:11:49 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 16:11:50 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-21 16:11:50 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'internalNotificationController' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Notification_service/target/notification-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/notificationservice/adapter/web/controller/InternalNotificationController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'notificationServiceImpl' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Notification_service/target/notification-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/notificationservice/infrastructure/service/NotificationServiceImpl.class]: Unsatisfied dependency expressed through constructor parameter 4: Error creating bean with name 'emailServiceImpl' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Notification_service/target/notification-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/notificationservice/infrastructure/service/EmailServiceImpl.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-04-21 16:11:50 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 16:11:50 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-21 16:11:50 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-21 16:11:50 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-21 16:11:50 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-21 16:11:50 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.cognizant.notificationservice.infrastructure.service.EmailServiceImpl required a bean of type 'org.springframework.mail.javamail.JavaMailSender' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.mail.javamail.JavaMailSender' in your configuration.
+

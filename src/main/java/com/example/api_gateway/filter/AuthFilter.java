@@ -10,17 +10,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
 
@@ -65,17 +70,36 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                                     .flatMap(body -> {
                                         try {
                                             JsonNode json = objectMapper.readTree(body);
-                                            String userId = extractField(json, "userId");
+                                            // Downstream services parse X-User-Id as a UUID — the legacy "userId"
+                                            // field is the auto-increment Long pk (always 0 in this build), so we
+                                            // prefer the new "authUserId" claim and fall back to "userId" only when
+                                            // the auth service hasn't been redeployed yet. Without this preference
+                                            // the knowledge / reward / notification services blow up converting
+                                            // "0" → UUID and return 500 Internal Server Error.
+                                            String authUserId = extractField(json, "authUserId");
+                                            String userId = authUserId != null ? authUserId : extractField(json, "userId");
                                             String role = extractField(json, "role");
+                                            // Roles may be in "roles" (list) — fall back if "role" is missing
+                                            if (role == null && json.has("roles") && json.get("roles").isArray() && json.get("roles").size() > 0) {
+                                                role = json.get("roles").get(0).asText();
+                                            }
 
-                                            // Add headers for downstream services
-                                            ServerHttpRequest mutatedRequest = request.mutate()
-                                                    .header("X-User-Id", userId != null ? userId : "")
-                                                    .header("X-User-Role", role != null ? role : "")
-                                                    .build();
-
-                                            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                                            final String userIdVal = userId != null ? userId : "";
+                                            final String roleVal = role != null ? role : "";
+                                            // Use ServerHttpRequestDecorator to add headers without mutating Netty's read-only headers
+                                            ServerHttpRequest decoratedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                                                @Override
+                                                public HttpHeaders getHeaders() {
+                                                    HttpHeaders headers = new HttpHeaders();
+                                                    headers.addAll(super.getHeaders());
+                                                    headers.set("X-User-Id", userIdVal);
+                                                    headers.set("X-User-Role", roleVal);
+                                                    return headers;
+                                                }
+                                            };
+                                            return chain.filter(exchange.mutate().request(decoratedRequest).build());
                                         } catch (Exception e) {
+                                            log.error("AuthFilter parse error: {}: {}", e.getClass().getName(), e.getMessage(), e);
                                             return onUnauthorized(exchange.getResponse(), "Failed to parse auth response");
                                         }
                                     });

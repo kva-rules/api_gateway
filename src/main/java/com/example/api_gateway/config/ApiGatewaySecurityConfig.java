@@ -13,17 +13,10 @@ public class ApiGatewaySecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)  // Disable CSRF for API Gateway
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
-                // Permit auth endpoints (login/register)
-                .pathMatchers("/api/auth/**").permitAll()
-                // Permit actuator for monitoring
-                .pathMatchers("/actuator/**", "/actuator/health").permitAll()
-                // Protect all other routes with JWT
-                .anyExchange().authenticated()
-            )
-            .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
-        
+                .anyExchange().permitAll()
+            );
         return http.build();
     }
 }

@@ -1,5 +1,11 @@
 package com.example.api_gateway.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,19 +21,20 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Gateway Dashboard", description = "Aggregate cross-service metrics for the admin UI")
 public class DashboardController {
 
     private final WebClient webClient;
 
     @Value("${services.user-service.url:http://localhost:8081}")
     private String userServiceUrl;
-    
+
     @Value("${services.ticket-service.url:http://localhost:8082}")
     private String ticketServiceUrl;
-    
+
     @Value("${services.reward-service.url:http://localhost:8083}")
     private String rewardServiceUrl;
-    
+
     @Value("${services.notification-service.url:http://localhost:8084}")
     private String notificationServiceUrl;
 
@@ -36,6 +43,11 @@ public class DashboardController {
     }
 
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Aggregate dashboard stats", description = "Fan-out to downstream services and merge stats")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Aggregated dashboard returned"),
+            @ApiResponse(responseCode = "504", description = "Upstream service timeout")
+    })
     public Mono<Map<String, Object>> dashboard() {
         Mono<Map> userStats = webClient.get()
                 .uri(userServiceUrl + "/api/internal/stats")

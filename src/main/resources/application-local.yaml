@@ -1,0 +1,154 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: user-service
+          uri: ${USER_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        - id: ticket-service
+          uri: ${TICKET_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/tickets/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        - id: solution-service
+          uri: ${SOLUTION_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/solutions/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        - id: knowledge-service
+          uri: ${KNOWLEDGE_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/knowledge/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        - id: reward-service
+          uri: ${REWARD_SERVICE_URI:http://localhost:8086}
+          predicates:
+            - Path=/api/rewards/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
+        # ---- Swagger aggregator: proxy /v3/api-docs/<service> to each downstream ----
+        - id: auth-service-docs
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v3/api-docs/auth-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: user-service-docs
+          uri: ${USER_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: ticket-service-docs
+          uri: ${TICKET_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/v3/api-docs/ticket-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: solution-service-docs
+          uri: ${SOLUTION_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/v3/api-docs/solution-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: knowledge-service-docs
+          uri: ${KNOWLEDGE_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/v3/api-docs/knowledge-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: reward-service-docs
+          uri: ${REWARD_SERVICE_URI:http://localhost:8086}
+          predicates:
+            - Path=/v3/api-docs/reward-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: notification-service-docs
+          uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/v3/api-docs/notification-service
+          filters:
+            - SetPath=/v3/api-docs
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+
+jwt:
+  secret: myVerySecretKeyForJWTThatIsLongEnoughForHS512Signature
+  expiration: 86400000
+
+auth-service:
+  url: ${AUTH_SERVICE_URI:http://localhost:8081}
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    display-request-duration: true

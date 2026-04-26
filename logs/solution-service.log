@@ -1,0 +1,200 @@
+2026-04-21 14:40:02 [main] INFO  c.c.S.SolutionServiceApplication - Starting SolutionServiceApplication v0.0.1-SNAPSHOT using Java 17.0.18 with PID 19177 (/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar started by abhidhabmellwyn in /Users/abhidhabmellwyn/Downloads/Services/api_gateway)
+2026-04-21 14:40:02 [main] INFO  c.c.S.SolutionServiceApplication - The following 1 profile is active: "local"
+2026-04-21 14:40:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-21 14:40:03 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 6 JPA repository interfaces.
+2026-04-21 14:40:04 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2026-04-21 14:40:04 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-21 14:40:04 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-04-21 14:40:04 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-21 14:40:04 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1470 ms
+2026-04-21 14:40:04 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-21 14:40:04 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.3.1.Final
+2026-04-21 14:40:04 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-04-21 14:40:04 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-21 14:40:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-21 14:40:04 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6f976c
+2026-04-21 14:40:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-21 14:40:05 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-21 14:40:05 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solution_attachments (
+        attachment_id uuid not null,
+        file_name varchar(255) not null,
+        file_size bigint,
+        file_type varchar(255),
+        file_url varchar(255) not null,
+        uploaded_at timestamp(6) not null,
+        uploaded_by uuid not null,
+        solution_id uuid not null,
+        primary key (attachment_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solution_comments (
+        comment_id uuid not null,
+        comment_text TEXT not null,
+        created_at timestamp(6) not null,
+        is_deleted boolean,
+        is_edited boolean,
+        parent_comment_id uuid,
+        updated_at timestamp(6),
+        user_id uuid not null,
+        solution_id uuid not null,
+        primary key (comment_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solution_contributors (
+        contributor_id uuid not null,
+        joined_at timestamp(6) not null,
+        role varchar(255) not null check (role in ('AUTHOR','CONTRIBUTOR','REVIEWER')),
+        user_id uuid not null,
+        solution_id uuid not null,
+        primary key (contributor_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solution_versions (
+        version_id uuid not null,
+        change_summary varchar(255),
+        content TEXT not null,
+        created_at timestamp(6) not null,
+        edited_by uuid not null,
+        title varchar(255) not null,
+        version_number integer not null,
+        solution_id uuid not null,
+        primary key (version_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solution_votes (
+        vote_id uuid not null,
+        created_at timestamp(6) not null,
+        updated_at timestamp(6),
+        user_id uuid not null,
+        vote_type varchar(255) not null check (vote_type in ('UPVOTE','DOWNVOTE')),
+        solution_id uuid not null,
+        primary key (vote_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    create table solutions (
+        solution_id uuid not null,
+        approved_at timestamp(6),
+        approved_by uuid,
+        created_at timestamp(6) not null,
+        created_by uuid not null,
+        current_version integer not null,
+        is_deleted boolean,
+        is_approved boolean,
+        solution_content TEXT not null,
+        status varchar(255) not null check (status in ('DRAFT','UNDER_REVIEW','APPROVED','REJECTED','ARCHIVED')),
+        ticket_id varchar(255) not null,
+        title varchar(255) not null,
+        updated_at timestamp(6),
+        primary key (solution_id)
+    )
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_contributors 
+       drop constraint if exists UKi3t6b1kqoc3gb3ernqayb7u7v
+2026-04-21 14:40:05 [main] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2026-04-21 14:40:05 [main] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uki3t6b1kqoc3gb3ernqayb7u7v" of relation "solution_contributors" does not exist, skipping
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_contributors 
+       add constraint UKi3t6b1kqoc3gb3ernqayb7u7v unique (solution_id, user_id)
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_votes 
+       drop constraint if exists UK7fkvlrr5f9hb3l6315fd4pkty
+2026-04-21 14:40:05 [main] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2026-04-21 14:40:05 [main] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uk7fkvlrr5f9hb3l6315fd4pkty" of relation "solution_votes" does not exist, skipping
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_votes 
+       add constraint UK7fkvlrr5f9hb3l6315fd4pkty unique (solution_id, user_id)
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_attachments 
+       add constraint FKp0ak4e7tnmby3oikk4u1698nk 
+       foreign key (solution_id) 
+       references solutions
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_comments 
+       add constraint FKci27nh5betqrmv30fqsr325lk 
+       foreign key (solution_id) 
+       references solutions
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_contributors 
+       add constraint FKis6to7ocsnol8umh3vn4e64sa 
+       foreign key (solution_id) 
+       references solutions
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_versions 
+       add constraint FK43fcf8dby6xxxnqot6h93hd1w 
+       foreign key (solution_id) 
+       references solutions
+2026-04-21 14:40:05 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists solution_votes 
+       add constraint FKck67rhlb22vnhuewf56485pj6 
+       foreign key (solution_id) 
+       references solutions
+2026-04-21 14:40:05 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 14:40:05 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-21 14:40:05 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'voteController' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/controller/VoteController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'voteServiceImpl' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/service/impl/VoteServiceImpl.class]: Unsatisfied dependency expressed through constructor parameter 3: Error creating bean with name 'solutionEventProducer' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/kafka/SolutionEventProducer.class]: Unsatisfied dependency expressed through constructor parameter 1: No qualifying bean of type 'org.springframework.kafka.core.KafkaTemplate<java.lang.String, java.lang.Object>' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-04-21 14:40:05 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 14:40:05 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-21 14:40:05 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-21 14:40:05 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-21 14:40:05 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-21 14:40:06 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 1 of constructor in com.cognizant.Solution_service.kafka.SolutionEventProducer required a bean of type 'org.springframework.kafka.core.KafkaTemplate' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.kafka.core.KafkaTemplate' in your configuration.
+
+2026-04-21 15:12:40 [main] INFO  c.c.S.SolutionServiceApplication - Starting SolutionServiceApplication v0.0.1-SNAPSHOT using Java 17.0.18 with PID 26276 (/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar started by abhidhabmellwyn in /Users/abhidhabmellwyn/Downloads/Services/api_gateway)
+2026-04-21 15:12:40 [main] INFO  c.c.S.SolutionServiceApplication - The following 1 profile is active: "local"
+2026-04-21 15:12:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-21 15:12:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 6 JPA repository interfaces.
+2026-04-21 15:12:42 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8084 (http)
+2026-04-21 15:12:42 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-21 15:12:42 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-04-21 15:12:42 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-21 15:12:42 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1729 ms
+2026-04-21 15:12:42 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-21 15:12:42 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.3.1.Final
+2026-04-21 15:12:42 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-04-21 15:12:43 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-21 15:12:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-21 15:12:43 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@719bb60d
+2026-04-21 15:12:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-21 15:12:43 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-21 15:12:43 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-21 15:12:43 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 15:12:43 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-21 15:12:44 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'voteController' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/controller/VoteController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'voteServiceImpl' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/service/impl/VoteServiceImpl.class]: Unsatisfied dependency expressed through constructor parameter 3: Error creating bean with name 'solutionEventProducer' defined in URL [jar:nested:/Users/abhidhabmellwyn/Downloads/Services/Solution_service/target/solution-service-0.0.1-SNAPSHOT.jar/!BOOT-INF/classes/!/com/cognizant/Solution_service/kafka/SolutionEventProducer.class]: Unsatisfied dependency expressed through constructor parameter 1: No qualifying bean of type 'org.springframework.kafka.core.KafkaTemplate<java.lang.String, java.lang.Object>' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-04-21 15:12:44 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21 15:12:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-21 15:12:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-21 15:12:44 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-21 15:12:44 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-21 15:12:44 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 1 of constructor in com.cognizant.Solution_service.kafka.SolutionEventProducer required a bean of type 'org.springframework.kafka.core.KafkaTemplate' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.kafka.core.KafkaTemplate' in your configuration.
+
