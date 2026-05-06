@@ -62,6 +62,13 @@ spring:
             - StripPrefix=0
             - AuthFilter
 
+        - id: notification-websocket
+          uri: ws://notification-service:8087
+          predicates:
+            - Path=/ws/notifications/**
+          filters:
+            - StripPrefix=0
+
         - id: frontend
           uri: http://frontend:3000
           predicates:
