@@ -154,6 +154,34 @@ Inspect `/actuator/gateway/routes` (requires `management.endpoints.web.exposure.
 
 ---
 
+## Kubernetes
+- Manifest: `k8s/api-gateway.yaml` (part of `k8s/services.yaml`)
+- Namespace: `ticketing-system`
+- Service DNS (intra-cluster): `api-gateway:8080`
+- Ingress routes `/api`, `/swagger-ui`, `/v3/api-docs`, `/webjars` → this pod (before the frontend `/*` catch-all)
+- Env vars injected by `k8s/services.yaml`: `AUTH_SERVICE_URI`, `USER_SERVICE_URI`, `TICKET_SERVICE_URI`, `SOLUTION_SERVICE_URI`, `KNOWLEDGE_SERVICE_URI`, `REWARD_SERVICE_URI`, `NOTIFICATION_SERVICE_URI`
+
+```bash
+# View logs (shows all proxied requests, auth filter decisions)
+./services.sh k8s-logs api-gateway
+# or: kubectl logs -n ticketing-system deployment/api-gateway -f
+
+# Restart the pod
+kubectl rollout restart deployment/api-gateway -n ticketing-system
+```
+
+**Swagger UI is accessible through the ingress — no port-forward needed:**
+
+| URL | What it shows |
+|---|---|
+| http://ticketing.local/swagger-ui.html | Aggregated Swagger UI (all 7 services in dropdown) |
+| http://ticketing.local/v3/api-docs | Gateway-level OpenAPI JSON |
+| http://ticketing.local/v3/api-docs/auth-service | Auth service OpenAPI JSON |
+| http://ticketing.local/v3/api-docs/ticket-service | Ticket service OpenAPI JSON |
+| http://ticketing.local/v3/api-docs/solution-service | Solution service OpenAPI JSON |
+
+---
+
 ## Tech stack
 - Java 21 (Temurin)
 - Spring Boot 3.3.5 + Spring Cloud 2023.0.3

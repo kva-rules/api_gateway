@@ -65,6 +65,14 @@ spring:
             - StripPrefix=0
             - AuthFilter
 
+        - id: notification-preferences-service
+          uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/notification-preferences/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
         # ---- Swagger aggregator: proxy /v3/api-docs/<service> to each downstream ----
         - id: auth-service-docs
           uri: ${AUTH_SERVICE_URI:http://localhost:8081}
