@@ -49,6 +49,14 @@ spring:
             - StripPrefix=0
             - AuthFilter
 
+        - id: ratings-service
+          uri: ${KNOWLEDGE_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/ratings/**
+          filters:
+            - StripPrefix=0
+            - AuthFilter
+
         - id: reward-service
           uri: ${REWARD_SERVICE_URI:http://localhost:8086}
           predicates:
